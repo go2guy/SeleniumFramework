@@ -1,0 +1,19 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Vamsi Tests" verbose="2">
+	<!-- <parameter name="browse" value="Firefox"></parameter>
+    <parameter name="driverpath" value ="src/test/resources/geckodriver"></parameter> -->
+    
+    <parameter name="browse" value="Chrome"></parameter>
+    <parameter name="driverpath" value ="src/test/resources/chromedriver"></parameter> 
+    
+	<parameter name="testLogLevel" value = "info"></parameter>
+	<parameter name="baseURL" value ="http://the-internet.herokuapp.com"></parameter>
+		<parameter name="ScreenShotDirectory" value ="Screenshot/"></parameter>
+
+   <test name = "SmokeTest" preserve-order="true">
+       
+  		<classes>
+  	 	     <class name="com.selenium.practicalguide.Chapter1"></class>
+  	    </classes>
+    </test>
+</suite>
