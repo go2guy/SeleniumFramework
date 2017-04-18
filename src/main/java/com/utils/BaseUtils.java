@@ -18,8 +18,12 @@ import com.drivers.DriverInit;
 
 public class BaseUtils extends DriverInit {
 
-	public void NavigatToUrl(String url) {
+	public void NavigatToUrl() {
 		driver.navigate().to(getParam("baseURL"));
+	}
+
+	public void NavigatToUrl(String url) {
+		driver.navigate().to(url);
 	}
 
 	public void clickElement(WebElement element) {
