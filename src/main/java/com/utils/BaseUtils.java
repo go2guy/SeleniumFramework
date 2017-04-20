@@ -2,7 +2,8 @@ package com.utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
@@ -92,13 +93,19 @@ public class BaseUtils extends DriverInit {
 		return TestngContext.getContext().getCurrentXmlTest().getParameter(what);
 	}
 
+	public static String getDate(String format, int days_to_add) {
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.DATE, days_to_add); // number of days to add
+		String myDateString = (String) (sdf.format(c.getTime()));
+		return myDateString;
+	}
+
 	public static void takeScreenShot(ITestResult result) {
 
 		if (result.getStatus() == ITestResult.FAILURE) {
-			Date date = new Date(System.currentTimeMillis());
-			String dateString = date.toString();
-			String screenShotName = getParam("ScreenShotDirectory") + "/" + dateString + "/" + dateString
-					+ result.getName() + ".png";
+			String screenShotName = getParam("ScreenShotDirectory") + "/" + getDate("yyyy-MM-dd", 0) + "/"
+					+ getDate("yyyy-MM-dd-H-m-s", 0) + "_" + result.getName() + ".png";
 			File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 			try {
 				FileUtils.copyFile(scrFile, new File(screenShotName));
