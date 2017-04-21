@@ -101,7 +101,7 @@ public class BaseUtils extends DriverInit {
 		return myDateString;
 	}
 
-	public static void takeScreenShot(ITestResult result) {
+	public static String takeScreenShot(ITestResult result) {
 
 		if (result.getStatus() == ITestResult.FAILURE) {
 			String screenShotName = getParam("ScreenShotDirectory") + "/" + getDate("yyyy-MM-dd", 0) + "/"
@@ -111,8 +111,11 @@ public class BaseUtils extends DriverInit {
 				FileUtils.copyFile(scrFile, new File(screenShotName));
 			} catch (IOException e) {
 				e.printStackTrace();
+				return "";
 			}
+			return screenShotName;
 		}
+		return "";
 
 	}
 }

@@ -14,109 +14,110 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcelUtils {
 
-    private static XSSFWorkbook ExcelWBook;
-    private static XSSFSheet ExcelWSheet;
-    private static XSSFCell Cell;
+	private static XSSFWorkbook ExcelWBookRead;
+	private static XSSFSheet ExcelWSheetRead;
+	private static XSSFWorkbook ExcelWBookWrite;
+	private static XSSFSheet ExcelWSheetWrite;
+	private static XSSFCell Cell;
 
-    public static void setExcelFile(String Path, String SheetName) throws Exception {
-        try {
-            // Open the Excel file
-            FileInputStream ExcelFile = new FileInputStream(Path);
-            // Access the required test data sheet
-            ExcelWBook = new XSSFWorkbook(ExcelFile);
-            ExcelWSheet = ExcelWBook.getSheet(SheetName);
-        } catch (Exception e) {
-            throw (e);
-        }
-    }
+	public static void setExcelFileToRead(String Path, String SheetName) throws Exception {
+		try {
+			// Open the Excel file
+			FileInputStream ExcelFile = new FileInputStream(Path);
+			// Access the required test data sheet
+			ExcelWBookRead = new XSSFWorkbook(ExcelFile);
+			ExcelWSheetRead = ExcelWBookRead.getSheet(SheetName);
+		} catch (Exception e) {
+			throw (e);
+		}
+	}
 
-    // This method is to read the test data from the Excel cell, in this we are
-    // passing parameters as Row num and Col num
+	// This method is to read the test data from the Excel cell, in this we are
+	// passing parameters as Row num and Col num
 
-    public static String getCellData(int RowNum, int ColNum) throws Exception {
-        try {
+	public static String getCellData(int RowNum, int ColNum) throws Exception {
+		try {
 
-            Cell = ExcelWSheet.getRow(RowNum).getCell(ColNum);
+			Cell = ExcelWSheetRead.getRow(RowNum).getCell(ColNum);
 
-            switch (Cell.getCellType()) {
-                case 0:
-                    return String.valueOf(Cell.getNumericCellValue());
-                case 1:
-                    return Cell.getStringCellValue();
-                default:
-                    return "";
-            }
+			switch (Cell.getCellType()) {
+			case 0:
+				return String.valueOf(Cell.getNumericCellValue());
+			case 1:
+				return Cell.getStringCellValue();
+			default:
+				return "";
+			}
 
-        } catch (Exception e) {
-            return "";
-        }
-    }
+		} catch (Exception e) {
+			return "";
+		}
+	}
 
-    public static String createWorksheet(String Path, String SheetName) throws Exception {
-        File file = new File(Path);
-        if (!file.exists())
-            ExcelWBook = new XSSFWorkbook();
+	public static String createWorksheet(String Path, String SheetName) throws Exception {
+		File file = new File(Path);
+		if (!file.exists())
+			ExcelWBookWrite = new XSSFWorkbook();
 
-        try {
+		try {
 
-            ExcelWSheet = ExcelWBook.createSheet(SheetName);
+			ExcelWSheetWrite = ExcelWBookWrite.createSheet(SheetName);
 
-            writeOut(Path);
-            return SheetName;
-        } catch (Exception e) {
-            return "";
+			writeOut(Path);
+			return SheetName;
+		} catch (Exception e) {
+			return "";
 
-        }
-    }
+		}
+	}
 
+	public static void writeRow(String Path, Object[][] data) throws IOException {
 
-    public static void writeRow(String Path, Object[][] data) throws IOException {
+		int rowCount = ExcelWSheetWrite.getLastRowNum();
 
-        int rowCount = ExcelWSheet.getLastRowNum();
+		for (Object[] payload : data) {
 
-        for (Object[] payload : data) {
+			XSSFRow row = ExcelWSheetWrite.createRow(rowCount++);
 
-            XSSFRow row = ExcelWSheet.createRow(rowCount++);
+			int columnCount = 0;
 
-            int columnCount = 0;
+			for (Object field : payload) {
+				Cell = row.createCell(columnCount++);
+				if (field instanceof String) {
+					Cell.setCellValue((String) field);
+				} else if (field instanceof Integer) {
+					Cell.setCellValue((Integer) field);
+				}
+			}
 
-            for (Object field : payload) {
-                Cell = row.createCell(columnCount++);
-                if (field instanceof String) {
-                    Cell.setCellValue((String) field);
-                } else if (field instanceof Integer) {
-                    Cell.setCellValue((Integer) field);
-                }
-            }
+		}
 
-        }
+		writeOut(Path);
+	}
 
-        writeOut(Path);
-    }
+	public static void writeRow(String Path, List<String> data) throws IOException {
 
-    public static void writeRow(String Path, List<String> data) throws IOException {
+		int rowCount = ExcelWSheetWrite.getPhysicalNumberOfRows();
 
-        int rowCount = ExcelWSheet.getPhysicalNumberOfRows();
+		XSSFRow row = ExcelWSheetWrite.createRow(rowCount++);
 
-        XSSFRow row = ExcelWSheet.createRow(rowCount++);
+		int columnCount = 0;
 
-        int columnCount = 0;
+		for (String field : data) {
+			Cell = row.createCell(columnCount++);
+			Cell.setCellValue((String) field);
+		}
 
-        for (String field : data) {
-            Cell = row.createCell(columnCount++);
-            Cell.setCellValue((String) field);
-        }
+		writeOut(Path);
+	}
 
-        writeOut(Path);
-    }
+	private static void writeOut(String Path) throws FileNotFoundException, IOException {
+		FileOutputStream fileOut = new FileOutputStream(Path);
 
-    private static void writeOut(String Path) throws FileNotFoundException, IOException {
-        FileOutputStream fileOut = new FileOutputStream(Path);
-
-        //write this workbook to an Outputstream.
-        ExcelWBook.write(fileOut);
-        fileOut.flush();
-        fileOut.close();
-    }
+		// write this workbook to an Outputstream.
+		ExcelWBookWrite.write(fileOut);
+		fileOut.flush();
+		fileOut.close();
+	}
 
 }

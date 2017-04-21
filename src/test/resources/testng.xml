@@ -8,7 +8,7 @@
 	<parameter name="testLogLevel" value="info"></parameter>
 	<parameter name="baseURL"
 		value="https://www.w3schools.com/html/html_tables.asp"></parameter>
-	<parameter name="ScreenShotDirectory" value="Screenshot/"></parameter>
+	<parameter name="ScreenShotDirectory" value="Screenshot"></parameter>
 
 	<test name="SmokeTest" preserve-order="true">
 		<classes>
