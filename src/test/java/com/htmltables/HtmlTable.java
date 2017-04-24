@@ -1,5 +1,6 @@
 package com.htmltables;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,12 +19,15 @@ import com.utils.TestngContext;
 
 public class HtmlTable extends BaseUtils {
 
-	private TablePages tp;
+	private TablePages TP;
 	private static String EXCEL_FILE = "src/test/resources/HTMLTables.xlsx";
 	private static String EXCEL_FILE2 = "src/test/resources/test.xlsx";
 	private static String EXCEL_WORKSHEET1 = "HTML Table";
 	private static String EXCEL_WORKSHEET2 = "HTML Table 2";
 	private static String TEST_EXIT_REPORT = "src/test/resources/test_exit.xlsx";
+	private ExcelUtils WriteBook;
+	private ExcelUtils TestExit;
+	private ExcelUtils ReadBook;
 
 	@BeforeClass(alwaysRun = true)
 	public void launchBrowser(ITestContext context) throws Exception {
@@ -31,82 +35,89 @@ public class HtmlTable extends BaseUtils {
 		setDriver(); // sets the driver
 		NavigatToUrl(); // Navigate to primary webpage
 
-		tp = new TablePages(getDriver());
+		TP = new TablePages(getDriver());
+		WriteBook = new ExcelUtils();
 
-		ExcelUtils.createWorksheet(TEST_EXIT_REPORT, this.getClass().getName());
-		List<String> header = Arrays.asList("TestCase", "Pass/Fail", "Screenshot Location");
-		ExcelUtils.writeRow(TEST_EXIT_REPORT, header);
+		ReadBook = new ExcelUtils();
+
+		createTestExitHeader();
 	}
 
 	@Test(priority = 10)
 	public void verifyWorksheetHTMLTable() throws Exception {
 
 		// tp.printTable();
-		ExcelUtils.setExcelFileToRead(EXCEL_FILE, EXCEL_WORKSHEET1);
-		Assert.assertEquals(tp.getTableHeader(tp.tableRows, 0, 0), ExcelUtils.getCellData(0, 0));
-		Assert.assertEquals(tp.getTableCell(tp.tableRows, 1, 0), ExcelUtils.getCellData(1, 0));
+		ReadBook.setExcelFileToRead(EXCEL_FILE, EXCEL_WORKSHEET1);
+		Assert.assertEquals(TP.getTableHeader(TP.tableRows, 0, 0), ReadBook.getCellData(0, 0));
+		Assert.assertEquals(TP.getTableCell(TP.tableRows, 1, 0), ReadBook.getCellData(1, 0));
 
 	}
 
 	@Test(priority = 20)
 	public void verifyWorksheet2HTMLTable() throws Exception {
 
-		ExcelUtils.setExcelFileToRead(EXCEL_FILE, EXCEL_WORKSHEET2);
-		Assert.assertEquals("Country", ExcelUtils.getCellData(0, 0));
-		Assert.assertEquals("Germany", ExcelUtils.getCellData(1, 0));
+		ReadBook.setExcelFileToRead(EXCEL_FILE, EXCEL_WORKSHEET2);
+		Assert.assertEquals("Country", ReadBook.getCellData(0, 0));
+		Assert.assertEquals("Germany", ReadBook.getCellData(1, 0));
 
 	}
 
 	@Test(priority = 30)
 	public void writeFileAlist() throws Exception {
 
-		ExcelUtils.createWorksheet(EXCEL_FILE2, EXCEL_WORKSHEET1);
+		WriteBook.createWorksheet(EXCEL_FILE2, EXCEL_WORKSHEET1);
 
 		List<String> header = Arrays.asList("Country", "Contact", "Company");
-		ExcelUtils.writeRow(EXCEL_FILE2, header);
+		WriteBook.writeRow(EXCEL_FILE2, header);
 		List<String> data = Arrays.asList("Germany", "Maria Anders", "Alfreds Futterkiste");
-		ExcelUtils.writeRow(EXCEL_FILE2, data);
+		WriteBook.writeRow(EXCEL_FILE2, data);
 		data = Arrays.asList("Mexico", "Francisco Chang", "Centro comercial Moctezuma");
-		ExcelUtils.writeRow(EXCEL_FILE2, data);
+		WriteBook.writeRow(EXCEL_FILE2, data);
 		data = Arrays.asList("Austria", "Roland Mendel", "Ernst Handel");
-		ExcelUtils.writeRow(EXCEL_FILE2, data);
+		WriteBook.writeRow(EXCEL_FILE2, data);
 		data = Arrays.asList("UK", "Helen Bennett", "Island Trading");
-		ExcelUtils.writeRow(EXCEL_FILE2, data);
+		WriteBook.writeRow(EXCEL_FILE2, data);
 		data = Arrays.asList("Canada", "Yoshi Tannamuri", "Laughing Bacchus Winecellars");
-		ExcelUtils.writeRow(EXCEL_FILE2, data);
+		WriteBook.writeRow(EXCEL_FILE2, data);
 		data = Arrays.asList("Italy", "Giovanni Rovelli", "Magazzini Alimentari Riuniti");
-		ExcelUtils.writeRow(EXCEL_FILE2, data);
+		WriteBook.writeRow(EXCEL_FILE2, data);
 
 	}
 
 	@Test(priority = 40)
 	public void writeFileAsObject() throws Exception {
 
-		ExcelUtils.createWorksheet(EXCEL_FILE2, EXCEL_WORKSHEET2);
+		WriteBook.createWorksheet(EXCEL_FILE2, EXCEL_WORKSHEET2);
 
 		Object[][] data = { { "Head First Java", "Kathy Serria", 79 }, { "Effective Java", "Joshua Bloch", 36 },
 				{ "Clean Code", "Robert martin", 42 }, { "Thinking in Java", "Bruce Eckel", 35 }, };
 
-		ExcelUtils.writeRow(EXCEL_FILE2, data);
+		WriteBook.writeRow(EXCEL_FILE2, data);
 
 	}
 
 	@AfterMethod(alwaysRun = true)
 	public void validateTest(ITestResult result) throws Exception {
 		List<String> data = null;
-		ExcelUtils.createWorksheet(TEST_EXIT_REPORT, this.getClass().getName());
 
-		if (result.getStatus() == ITestResult.FAILURE) {
+		if (result.getStatus() == ITestResult.FAILURE)
 			data = Arrays.asList(result.getMethod().getMethodName(), "Fail", takeScreenShot(result));
-		} else {
+		else
 			data = Arrays.asList(result.getMethod().getMethodName(), "Pass", "");
-		}
-		ExcelUtils.writeRow(TEST_EXIT_REPORT, data);
+
+		TestExit.writeRow(TEST_EXIT_REPORT, data);
 	}
 
 	@AfterClass(alwaysRun = true)
 	public void terminateApp() {
 		tearDown();
+	}
+
+	private void createTestExitHeader() throws Exception, IOException {
+		TestExit = new ExcelUtils();
+		TestExit.createWorksheet(TEST_EXIT_REPORT, this.getClass().getName());
+		List<String> header = Arrays.asList("TestCase", "Pass/Fail", "Screenshot Location");
+		TestExit.writeRow(TEST_EXIT_REPORT, header);
 	}
 
 }

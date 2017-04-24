@@ -14,13 +14,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcelUtils {
 
-	private static XSSFWorkbook ExcelWBookRead;
-	private static XSSFSheet ExcelWSheetRead;
-	private static XSSFWorkbook ExcelWBookWrite;
-	private static XSSFSheet ExcelWSheetWrite;
-	private static XSSFCell Cell;
+	private XSSFWorkbook ExcelWBookRead;
+	private XSSFSheet ExcelWSheetRead;
+	private XSSFWorkbook ExcelWBookWrite;
+	private XSSFSheet ExcelWSheetWrite;
+	private XSSFCell Cell;
 
-	public static void setExcelFileToRead(String Path, String SheetName) throws Exception {
+	public void setExcelFileToRead(String Path, String SheetName) throws Exception {
 		try {
 			// Open the Excel file
 			FileInputStream ExcelFile = new FileInputStream(Path);
@@ -35,7 +35,7 @@ public class ExcelUtils {
 	// This method is to read the test data from the Excel cell, in this we are
 	// passing parameters as Row num and Col num
 
-	public static String getCellData(int RowNum, int ColNum) throws Exception {
+	public String getCellData(int RowNum, int ColNum) throws Exception {
 		try {
 
 			Cell = ExcelWSheetRead.getRow(RowNum).getCell(ColNum);
@@ -54,7 +54,7 @@ public class ExcelUtils {
 		}
 	}
 
-	public static String createWorksheet(String Path, String SheetName) throws Exception {
+	public String createWorksheet(String Path, String SheetName) throws Exception {
 		File file = new File(Path);
 		if (!file.exists())
 			ExcelWBookWrite = new XSSFWorkbook();
@@ -71,7 +71,7 @@ public class ExcelUtils {
 		}
 	}
 
-	public static void writeRow(String Path, Object[][] data) throws IOException {
+	public void writeRow(String Path, Object[][] data) throws IOException {
 
 		int rowCount = ExcelWSheetWrite.getLastRowNum();
 
@@ -95,7 +95,7 @@ public class ExcelUtils {
 		writeOut(Path);
 	}
 
-	public static void writeRow(String Path, List<String> data) throws IOException {
+	public void writeRow(String Path, List<String> data) throws IOException {
 
 		int rowCount = ExcelWSheetWrite.getPhysicalNumberOfRows();
 
@@ -111,7 +111,7 @@ public class ExcelUtils {
 		writeOut(Path);
 	}
 
-	private static void writeOut(String Path) throws FileNotFoundException, IOException {
+	private void writeOut(String Path) throws FileNotFoundException, IOException {
 		FileOutputStream fileOut = new FileOutputStream(Path);
 
 		// write this workbook to an Outputstream.
