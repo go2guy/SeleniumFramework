@@ -9,10 +9,16 @@
 	<parameter name="baseURL"
 		value="https://www.w3schools.com/html/html_tables.asp"></parameter>
 	<parameter name="ScreenShotDirectory" value="Screenshot"></parameter>
+	<parameter name="TestExitReport" value="src/test/resources/test_exit.xlsx"></parameter>
+
+	<listeners>
+		<listener class-name="com.utils.Listeners"></listener>
+	</listeners>
 
 	<test name="SmokeTest" preserve-order="true">
 		<classes>
 			<class name="com.htmltables.HtmlTable"></class>
+			<class name="com.htmltables.HtmlTable2"></class>
 		</classes>
 	</test>
 </suite>
